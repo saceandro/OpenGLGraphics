@@ -1,0 +1,11 @@
+void main(float3 position  : POSITION,
+     	  float3 color     : COLOR,
+  uniform float4x4 modelViewProj,
+  uniform float4x4 modelView,
+  uniform float4x4 modelViewNormal,
+      out float4 oPosition : POSITION,
+      out float4 oColor    : COLOR)
+{
+  oPosition = mul(modelViewProj, float4(position, 1.0));
+  oColor = float4(float3(1.0, 1.0, 1.0) - color.rgb, 1.0);
+}

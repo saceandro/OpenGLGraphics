@@ -1,0 +1,36 @@
+void main(float3 vPosition  : TEXCOORD0,
+     	  float3 vNormal    : TEXCOORD1,
+  uniform float4 lightPosition,
+  uniform float4 lightAmbient,
+  uniform float4 lightDiffuse,
+  uniform float4 lightSpecular,
+  uniform float4 ambient,
+  uniform float4 diffuse,
+  uniform float4 specular,
+  uniform float  shininess,
+      out float4 oColor    : COLOR)
+{
+  float3 P = vPosition;
+  float3 N = normalize(vNormal);
+  float3 Ra = lightAmbient.rgb * ambient.rgb;
+  
+  float3 L = lightPosition.xyz;
+  if (lightPosition.w == 0.0)
+    L = normalize(L);
+  else
+    L = normalize(L - P);
+  float d = max(dot(N, L), 0.0);
+  float3 Rd = lightDiffuse.rgb * diffuse.rgb * d;
+
+  float3 V = normalize(- P);
+  float3 M = normalize(L + V);
+  float  s = pow(max(dot(N, M), 0.0), shininess);
+  
+  // 以下はPhongの反射モデルの場合
+  //float3 R = 2.0 * dot(L, N) * N - L;
+  //float  s = pow(max(dot(R, V), 0.0), shininess);
+  if (d <= 0.0) s = 0.0;
+  float3 Rs = lightSpecular.rgb * specular.rgb * s;
+  oColor.rgb = Ra + Rd + Rs;
+  oColor.a = 1.0;
+}
